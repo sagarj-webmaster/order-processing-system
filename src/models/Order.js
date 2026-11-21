@@ -7,11 +7,11 @@ const orderItemSchema = new mongoose.Schema(
     productId: {
       type: String,
       required: [true, 'Product ID is required'],
-      trim: true
+      trim: true,
     },
     name: {
       type: String,
-      trim: true
+      trim: true,
     },
     quantity: {
       type: Number,
@@ -19,14 +19,14 @@ const orderItemSchema = new mongoose.Schema(
       min: [1, 'Quantity must be at least 1'],
       validate: {
         validator: Number.isInteger,
-        message: 'Quantity must be an integer'
-      }
+        message: 'Quantity must be an integer',
+      },
     },
     price: {
       type: Number,
       required: [true, 'Price is required'],
-      min: [0, 'Price cannot be negative']
-    }
+      min: [0, 'Price cannot be negative'],
+    },
   },
   { _id: false }
 );
@@ -37,7 +37,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Customer ID is required'],
       trim: true,
-      index: true
+      index: true,
     },
     items: {
       type: [orderItemSchema],
@@ -45,31 +45,34 @@ const orderSchema = new mongoose.Schema(
         validator: function (arr) {
           return Array.isArray(arr) && arr.length > 0;
         },
-        message: 'Order must contain at least one item'
-      }
+        message: 'Order must contain at least one item',
+      },
     },
     totalAmount: {
       type: Number,
       required: true,
-      min: [0, 'Total amount cannot be negative']
+      min: [0, 'Total amount cannot be negative'],
     },
     status: {
       type: String,
       enum: {
         values: ORDER_STATUSES,
-        message: 'Status must be one of: ' + ORDER_STATUSES.join(', ')
+        message: 'Status must be one of: ' + ORDER_STATUSES.join(', '),
       },
       default: 'PENDING',
-      index: true
-    }
+      index: true,
+    },
   },
   {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
   }
 );
 
+// Compound index for optimized querying & background cron performance
+orderSchema.index({ status: 1, createdAt: 1 });
+
 module.exports = {
   Order: mongoose.model('Order', orderSchema),
-  ORDER_STATUSES
+  ORDER_STATUSES,
 };

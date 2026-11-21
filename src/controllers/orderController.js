@@ -8,7 +8,7 @@ const VALID_TRANSITIONS = {
   PROCESSING: ['SHIPPED'],
   SHIPPED: ['DELIVERED'],
   DELIVERED: [],
-  CANCELLED: []
+  CANCELLED: [],
 };
 
 /**
@@ -27,12 +27,12 @@ const createOrder = asyncHandler(async (req, res) => {
     customerId: customerId.trim(),
     items,
     totalAmount,
-    status: 'PENDING'
+    status: 'PENDING',
   });
 
   res.status(201).json({
     success: true,
-    data: order
+    data: order,
   });
 });
 
@@ -49,7 +49,7 @@ const getOrderById = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: order
+    data: order,
   });
 });
 
@@ -70,7 +70,7 @@ const listOrders = asyncHandler(async (req, res) => {
 
   const [orders, total] = await Promise.all([
     Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    Order.countDocuments(filter)
+    Order.countDocuments(filter),
   ]);
 
   res.status(200).json({
@@ -80,9 +80,9 @@ const listOrders = asyncHandler(async (req, res) => {
       total,
       page,
       pages: Math.ceil(total / limit),
-      limit
+      limit,
     },
-    data: orders
+    data: orders,
   });
 });
 
@@ -105,10 +105,7 @@ const updateOrderStatus = asyncHandler(async (req, res, next) => {
   const allowedNext = VALID_TRANSITIONS[order.status] || [];
   if (!allowedNext.includes(nextStatus)) {
     return next(
-      new AppError(
-        `Cannot transition order status from ${order.status} to ${nextStatus}`,
-        400
-      )
+      new AppError(`Cannot transition order status from ${order.status} to ${nextStatus}`, 400)
     );
   }
 
@@ -117,7 +114,7 @@ const updateOrderStatus = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: order
+    data: order,
   });
 });
 
@@ -137,7 +134,7 @@ const cancelOrder = asyncHandler(async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: 'Order cancelled successfully',
-      data: updatedOrder
+      data: updatedOrder,
     });
   }
 
@@ -160,5 +157,5 @@ module.exports = {
   getOrderById,
   listOrders,
   updateOrderStatus,
-  cancelOrder
+  cancelOrder,
 };

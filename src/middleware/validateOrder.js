@@ -28,7 +28,11 @@ const validateCreateOrder = (req, res, next) => {
     if (!item.productId || typeof item.productId !== 'string' || !item.productId.trim()) {
       return next(new AppError(`Item at index ${i} is missing a valid productId`, 400));
     }
-    if (typeof item.quantity !== 'number' || !Number.isInteger(item.quantity) || item.quantity < 1) {
+    if (
+      typeof item.quantity !== 'number' ||
+      !Number.isInteger(item.quantity) ||
+      item.quantity < 1
+    ) {
       return next(new AppError(`Item at index ${i} must have an integer quantity >= 1`, 400));
     }
     if (typeof item.price !== 'number' || Number.isNaN(item.price) || item.price < 0) {
@@ -64,10 +68,7 @@ const validateStatusUpdate = (req, res, next) => {
   const normalized = status.toUpperCase();
   if (!ORDER_STATUSES.includes(normalized)) {
     return next(
-      new AppError(
-        `Invalid status '${status}'. Allowed values: ${ORDER_STATUSES.join(', ')}`,
-        400
-      )
+      new AppError(`Invalid status '${status}'. Allowed values: ${ORDER_STATUSES.join(', ')}`, 400)
     );
   }
   req.body.status = normalized;
@@ -78,5 +79,5 @@ module.exports = {
   validateObjectId,
   validateCreateOrder,
   validateStatusQuery,
-  validateStatusUpdate
+  validateStatusUpdate,
 };

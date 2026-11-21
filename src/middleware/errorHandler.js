@@ -31,9 +31,15 @@ const globalErrorHandler = (err, req, res, next) => {
   error.statusCode = err.statusCode || 500;
   error.status = err.status || 'error';
 
-  if (err.name === 'CastError') error = handleCastErrorDB(err);
-  if (err.name === 'ValidationError') error = handleValidationErrorDB(err);
-  if (err.code === 11000) error = handleDuplicateFieldsDB(err);
+  if (err.name === 'CastError') {
+    error = handleCastErrorDB(err);
+  }
+  if (err.name === 'ValidationError') {
+    error = handleValidationErrorDB(err);
+  }
+  if (err.code === 11000) {
+    error = handleDuplicateFieldsDB(err);
+  }
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     error = handleSyntaxError();
   }
@@ -41,7 +47,7 @@ const globalErrorHandler = (err, req, res, next) => {
   const response = {
     success: false,
     status: error.status,
-    message: error.isOperational ? error.message : 'Internal Server Error'
+    message: error.isOperational ? error.message : 'Internal Server Error',
   };
 
   if (process.env.NODE_ENV === 'development') {
@@ -57,5 +63,5 @@ const globalErrorHandler = (err, req, res, next) => {
 
 module.exports = {
   notFoundHandler,
-  globalErrorHandler
+  globalErrorHandler,
 };

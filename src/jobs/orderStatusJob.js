@@ -56,5 +56,5 @@ const startOrderStatusJob = () => {
 
 module.exports = {
   processPendingOrders,
-  startOrderStatusJob
+  startOrderStatusJob,
 };
